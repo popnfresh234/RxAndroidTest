@@ -1,8 +1,6 @@
 package com.dmtaiwan.alexander.rxandroidtest;
 
-import com.dmtaiwan.alexander.rxandroidtest.models.AQStation;
-
-import java.util.List;
+import com.dmtaiwan.alexander.rxandroidtest.models.RxResponse;
 
 import rx.Observable;
 
@@ -10,7 +8,7 @@ import rx.Observable;
  * Created by Alexander on 4/14/2016.
  */
 public interface IInteractor {
-    Observable<List<AQStation>> getStationsNetwork();
+    Observable<RxResponse> getNetworkData();
 
-    Observable<List<AQStation>> getStationsDisk();
+    Observable<RxResponse> getCacheData();
 }

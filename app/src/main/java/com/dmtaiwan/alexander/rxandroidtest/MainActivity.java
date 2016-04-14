@@ -5,10 +5,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.dmtaiwan.alexander.rxandroidtest.models.AQStation;
-
-import java.util.List;
+import com.dmtaiwan.alexander.rxandroidtest.models.RxResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,16 +39,41 @@ public class MainActivity extends AppCompatActivity implements IView{
     @Override
     protected void onResume() {
         super.onResume();
-        mSubscription = mPresenter.displayStations();
+        mSubscription = mPresenter.displayCacheData();
     }
 
     @Override
-    public void showStations(List<AQStation> aqStations) {
-        mTextView.setText(aqStations.toString());
+    protected void onPause() {
+        super.onPause();
+        mSubscription.unsubscribe();
     }
 
     @Override
-    public void loadingFailed(String error) {
+    public void showStations(RxResponse rxResponse) {
+        handleResponse(rxResponse);
+    }
+
+    private void handleResponse(RxResponse rxResponse) {
+        switch (rxResponse.getResponseType()) {
+            case RxResponse.CACHE_CALL:
+                mTextView.setText("CACHE DATA");
+                mSubscription = mPresenter.displayNetworkData();
+                break;
+            case RxResponse.NETWORK_CALL:
+                mTextView.setText("NETWORK DATA");
+                break;
+        }
+    }
+
+    @Override
+    public void cacheFailed(String error) {
         Snackbar.make(mCoordinatorLayout, error, Snackbar.LENGTH_LONG).show();
+        mSubscription = mPresenter.displayNetworkData();
+    }
+
+    @Override
+    public void networkFailed(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+
     }
 }
