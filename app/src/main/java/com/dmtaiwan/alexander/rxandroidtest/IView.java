@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface IView {
     void showStations(List<AQStation> aqStations);
+
+    void loadingFailed(String error);
 }
