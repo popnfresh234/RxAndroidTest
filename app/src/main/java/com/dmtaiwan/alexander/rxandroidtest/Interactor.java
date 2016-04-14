@@ -82,6 +82,5 @@ public class Interactor implements IInteractor{
             Log.i("HTTP ERROR CODE", "CODE : " + response.code());
             throw new RuntimeException("Error: " + response.code());
         }
-
     }
 }

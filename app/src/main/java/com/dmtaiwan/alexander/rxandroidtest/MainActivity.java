@@ -33,11 +33,15 @@ public class MainActivity extends AppCompatActivity implements IView{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mPresenter = new Presenter(this, this);
-        mSubscription = mPresenter.displayStations();
+
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSubscription = mPresenter.displayStations();
+    }
 
     @Override
     public void showStations(List<AQStation> aqStations) {

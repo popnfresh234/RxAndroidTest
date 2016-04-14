@@ -7,7 +7,6 @@ import com.dmtaiwan.alexander.rxandroidtest.models.AQStation;
 
 import java.util.List;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,10 +30,8 @@ public class Presenter implements IPresenter {
     @Override
     public Subscription displayStations() {
 
-        return mergedData().onErrorReturn(throwable -> {
-            Log.i("Error", "swallowing");
-            return null;
-        }).filter(aqStations -> aqStations != null)
+        return interactor.getStationsDisk()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(() -> {
 
@@ -42,11 +39,12 @@ public class Presenter implements IPresenter {
                 .subscribe(new Subscriber<List<AQStation>>() {
                     @Override
                     public void onCompleted() {
-
+                        Log.i("OnCompleted", "OnCompleted");
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.i("onError", "onError");
                         view.loadingFailed(e.getMessage());
                     }
 
@@ -55,9 +53,5 @@ public class Presenter implements IPresenter {
                         view.showStations(stations);
                     }
                 });
-    }
-
-    private Observable<List<AQStation>> mergedData() {
-        return Observable.merge(interactor.getStationsDisk().subscribeOn(Schedulers.io()), interactor.getStationsNetwork().subscribeOn(Schedulers.io()));
     }
 }
